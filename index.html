@@ -36,7 +36,7 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-}
+        }
 
         .card-header {
             font-size: 1.5rem;
@@ -111,8 +111,8 @@
             overflow-y: auto; /* Добавление вертикальной прокрутки */
             max-height: 100%; /* Ограничение высоты */
             overflow-x: hidden; /* Убираем горизонтальную прокрутку */
-            box-sizing: bordeer-box;        
-}
+            box-sizing: border-box;        
+        }
 
         .alert {
             padding: 15px;
@@ -220,7 +220,7 @@
 <script>
     const apiUrl = 'https://api.green-api.com';
 
-    async function fetchAPI(endpoint, method, body = {}) {
+    async function fetchAPI(endpoint, method, body = null) {
         const idInstance = document.getElementById('idInstance').value;
         const apiToken = document.getElementById('apiToken').value;
 
@@ -229,19 +229,32 @@
             return;
         }
 
-        const url = `${apiUrl}/${endpoint}`;
+        let url = `${apiUrl}/${endpoint}`;
+
         const headers = {
             'Content-Type': 'application/json',
         };
+
         const options = {
             method: method,
             headers: headers,
-            body: JSON.stringify(body),
         };
 
-        const response = await fetch(url, options);
-        const data = await response.json();
-        document.getElementById('response').value = JSON.stringify(data, null, 2);
+        // Если метод не GET, то добавляем тело запроса
+        if (method !== 'GET' && body) {
+            options.body = JSON.stringify(body);
+        }
+
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                throw new Error(`Ошибка: ${response.status}`);
+            }
+            const data = await response.json();
+            document.getElementById('response').value = JSON.stringify(data, null, 2);
+        } catch (error) {
+            showAlert(`Ошибка: ${error.message}`);
+        }
     }
 
     function showAlert(message) {
@@ -257,6 +270,7 @@
         const idInstance = document.getElementById('idInstance').value;
         const apiToken = document.getElementById('apiToken').value;
         if (idInstance && apiToken) {
+            // Для GET запроса параметры передаются через URL
             fetchAPI(`waInstance${idInstance}/getSettings/${apiToken}`, 'GET');
         } else {
             showAlert('Введите idInstance и ApiTokenInstance');
@@ -267,6 +281,7 @@
         const idInstance = document.getElementById('idInstance').value;
         const apiToken = document.getElementById('apiToken').value;
         if (idInstance && apiToken) {
+            // Для GET запроса параметры передаются через URL
             fetchAPI(`waInstance${idInstance}/getStateInstance/${apiToken}`, 'GET');
         } else {
             showAlert('Введите idInstance и ApiTokenInstance');
