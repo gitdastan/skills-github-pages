@@ -30,14 +30,7 @@
             grid-gap: 30px;
         }
 
-        .left-column {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .right-column {
+        .left-column, .right-column {
             background-color: #fff;
             padding: 20px;
             border-radius: 10px;
@@ -114,6 +107,9 @@
             border: 1px solid #ccc;
             background-color: #f9f9f9;
             resize: none;
+            overflow-y: auto; /* Добавление вертикальной прокрутки */
+            max-height: 100%; /* Ограничение высоты */
+            overflow-x: hidden; /* Убираем горизонтальную прокрутку */
         }
 
         .alert {
